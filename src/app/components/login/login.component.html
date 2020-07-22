@@ -1,0 +1,18 @@
+<div style="max-width:35%;display:flex;flex-direction:column;align-items:center;margin:0 auto;">
+   <div style="font-size:25px">Wager</div>
+   <ng-container *ngIf="onLogin; else signuptemp">
+      <input type="text" placeholder="Email" [(ngModel)]="loginemail"><!--eventually email or username-->
+      <input type="password" placeholder="Password" [(ngModel)]="loginpassword">
+      <button (click)="login()">Login</button>
+      <hr style="width:40%">
+      <button (click)="onLogin=false">Sign up</button>
+   </ng-container>
+   <ng-template #signuptemp>
+      <input type="text" placeholder="Username" [(ngModel)]="uname">
+      <input type="email" placeholder="Email" [(ngModel)]="email">
+      <input type="password" placeholder="Password" [(ngModel)]="password">
+      <input type="password" placeholder="Confirm password" [(ngModel)]="confpassword">
+      <button (click)="signup()">Sign up</button><br>
+      <button (click)="onLogin=true">Cancel</button>
+   </ng-template>
+</div>
