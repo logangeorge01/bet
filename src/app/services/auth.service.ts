@@ -19,9 +19,7 @@ export class AuthService {
       private router: Router
    ) {
       this.user$ = this.afAuth.authState.pipe(
-         switchMap(user => {
-         return user ? this.db.collection('users').doc(user.uid).valueChanges() : of(null);
-         })
+         switchMap(user => user ? this.db.collection('users').doc(user.uid).valueChanges() : of(null))
       ) as any;
    }
 
@@ -31,11 +29,14 @@ export class AuthService {
 
    signUp(username: string, email: string, password: string) {
       return this.afAuth.auth.createUserWithEmailAndPassword(email, password).then(cred => {
-         this.db.collection('users').doc(cred.user.uid).set({
+         const user = {
             uid: cred.user.uid,
             username,
             email: cred.user.email,
-         }, { merge: true });
+            balance: 0,
+            admin: false
+         } as User;
+         this.db.collection('users').doc(cred.user.uid).set(user, { merge: true });
          this.db.collection('usernames').add({username});
       });
    }

@@ -1,1 +1,62 @@
-<button (click)="logout()">Logout</button>
+<div *ngIf="(auth.user$ | async) as user" style="max-width:375px;display:flex;flex-direction:column;align-items:center;margin:0 auto;">
+   <div style="font-size:25px">Wager</div>
+   <button style="margin-top:15px" (click)="gotoaccount()">
+      {{user.username + '&nbsp;&nbsp;$' + user.balance}}
+   </button>
+   <button *ngIf="user.admin" style="margin-top:15px" (click)="gotoadmin()">ADMIN</button>
+   <button *ngIf="notplacingbet; else placingbet" style="margin-top:50px" (click)="startNewBet()">Place new bet</button>
+   <ng-template #placingbet>
+      <div style="width:280px;margin-top:15px;border:1px solid #000;display:flex;flex-direction:column;padding:10px;">
+         <div style="font-weight:bold;text-align:center;">Place new bet</div>
+
+         <div style="margin-top:10px">Categories</div>
+         <div style="display:flex;flex-direction:row;margin-top:5px;flex-wrap:wrap;">
+            <div *ngFor="let c1 of (qs.cats | keyvalue)" style="margin-right:10px;display:flex;flex-direction:row">
+               <input type="radio" [value]="c1.key" name="cat1" [(ngModel)]="cat1">
+               <div>{{c1.key}}</div>
+            </div>
+         </div>
+         <div style="display:flex;flex-direction:row;margin-top:5px;flex-wrap:wrap;">
+            <div *ngFor="let c2 of (qs.cats[cat1] | keyvalue)" style="margin-right:10px;display:flex;flex-direction:row;">
+               <input type="radio" [value]="c2.key" name="cat2" [(ngModel)]="cat2">
+               <div>{{c2.key}}</div>
+            </div>
+         </div>
+         <div style="display:flex;flex-direction:row;margin-top:5px;flex-wrap:wrap;">
+            <ng-container *ngIf="qs.cats[cat1]">
+               <div *ngFor="let c3 of (qs.cats[cat1][cat2] | keyvalue)" style="margin-right:10px;display:flex;flex-direction:row;">
+                  <input type="radio" [value]="c3.key" name="cat3" [(ngModel)]="cat3">
+                  <div>{{c3.key}}</div>
+               </div>
+            </ng-container>
+         </div>
+
+         <div style="margin-top:10px">Which event?</div>
+         <div *ngFor="let event of (qs.events$ | async)" (click)="this.selevent=event" style="cursor:pointer;padding:3px 5px;margin-bottom:2px;background-color:#000;color:#fff;border-radius:2px;">
+            {{event.name}}
+         </div>
+         
+         <div *ngIf="this.selevent" style="margin-top:10px">
+            <div>Which side?</div>
+            <div *ngFor="let event of this.selevent.sides" style="cursor:pointer;padding:3px 5px;margin-bottom:2px;background-color:#000;color:#fff;border-radius:2px;display:flex;flex-direction:row;justify-content:space-between;">
+               <div>{{event.name + ' (' + (100/event.decOdds | number:'1.0-0') + '%)'}}</div>
+               <div>{{event.decOdds}} x bet</div>
+            </div>
+         </div>
+
+         <button style="margin-top:10px;font-weight:bold;" (click)="placeNewBet(user)">Place bet</button>
+         <button style="margin-top:5px" (click)="notplacingbet=true">Cancel</button>
+      </div>
+   </ng-template>
+
+   <div style="margin-top:25px">
+      <div *ngFor="let bet of (qs.allBets$ | async)" style="padding:5px;margin-bottom:5px;border:1px solid #000;border-radius:5px;">
+         <div>{{bet.event + ' (' + bet.acceptor.side + ')'}}</div>
+         <div style="display:flex;flex-direction:row;justify-content:space-between;margin-top:3px;">
+            <div>{{bet.creator.username}}</div>
+            <div style="font-weight:bold;">bet {{(bet.pot-bet.creator.amount).toFixed(2)}} to win {{bet.pot.toFixed(2)}}</div>
+         </div>
+      </div>
+   </div>
+</div>
+

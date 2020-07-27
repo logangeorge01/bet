@@ -1,0 +1,6 @@
+<div *ngIf="(auth.user$ | async) as user" style="max-width:375px;display:flex;flex-direction:column;align-items:center;margin:0 auto;">
+   <div style="font-size:25px">{{user.username}}</div>
+   <div style="margin-top:8px">Balance: ${{user.balance.toFixed(2)}}</div>
+   <button style="margin-top:15px" (click)="gohome()">Go home</button>
+   <button style="margin-top:15px" (click)="logout()">Logout</button>
+</div>

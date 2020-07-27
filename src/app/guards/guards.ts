@@ -23,3 +23,46 @@ export class AuthGuard implements CanActivate {
       );
    }
 }
+
+@Injectable()
+export class LoginGuard implements CanActivate {
+   constructor(
+      private auth: AuthService,
+      private router: Router
+   ) {}
+
+   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+      return this.auth.user$.pipe(
+         map(usr => {
+            if (usr) {
+               this.router.navigate(['']);
+               return false;
+            }
+            return true;
+         })
+      );
+   }
+}
+
+@Injectable()
+export class AdminGuard implements CanActivate {
+   constructor(
+      private auth: AuthService,
+      private router: Router
+   ) {}
+
+   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+      return this.auth.user$.pipe(
+         map(usr => {
+            if (!usr) {
+               this.router.navigate(['login']);
+               return false;
+            }
+            if (!usr.admin) {
+               this.router.navigate(['']);
+            }
+            return true;
+         })
+      );
+   }
+}
