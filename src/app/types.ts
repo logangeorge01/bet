@@ -1,3 +1,5 @@
+import { firestore } from 'firebase';
+
 export class User {
    uid: string;
    email: string;
@@ -22,12 +24,12 @@ export class Bet {
    acceptor: {
       uid?: string;
       username?: string;
-      amount: number; // FIXXXXX - need note in rules that money always refunded when tie
+      amount: number;
       side: string;
    };
    pot: number;
    status: number; // 0-open, 1-active, 2-resolved,
-   dtCreated: string;
+   dtCreated: string | firestore.Timestamp;
 }
 
 export class Event {

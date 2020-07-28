@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { QueriesService } from 'src/app/services/queries.service';
-import { Observable } from 'rxjs';
-import { AngularFirestore } from '@angular/fire/firestore';
 import { Event } from 'src/app/types';
-import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 @Component({
@@ -13,6 +10,9 @@ import { Router } from '@angular/router';
   styleUrls: ['./admin.component.css']
 })
 export class AdminComponent implements OnInit {
+   addToUsername: string;
+   addAmount: number;
+
    notcreating = true;
 
    eventname: string;
@@ -28,12 +28,11 @@ export class AdminComponent implements OnInit {
    constructor(
       private auth: AuthService,
       private qs: QueriesService,
-      private db: AngularFirestore,
       private router: Router
    ) { }
 
    ngOnInit() {
-      this.qs.getAllEvents();
+      this.loadEvs();
    }
 
    createMarket() {
@@ -52,11 +51,25 @@ export class AdminComponent implements OnInit {
          cat2: this.cat2,
          cat3: this.cat3
       } as Event;
-      this.db.collection('events').add(newEvent).then(() => this.notcreating = true);
+      this.qs.createEvent(newEvent).then(() => {
+         this.notcreating = true;
+         this.loadEvs();
+      });
    }
 
    gohome() {
       this.router.navigate(['']);
+   }
+
+   loadEvs() {
+      this.qs.getAllEvents();
+   }
+
+   addFunds() {
+      this.qs.addFunds(this.addToUsername, this.addAmount).then(() => {
+         this.addToUsername = null;
+         this.addAmount = null;
+      });
    }
 
 }

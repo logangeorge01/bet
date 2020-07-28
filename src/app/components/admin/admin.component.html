@@ -1,10 +1,17 @@
 <div *ngIf="(auth.user$ | async) as user" style="max-width:375px;display:flex;flex-direction:column;align-items:center;margin:0 auto;">
    <div style="font-size:25px">Admin</div>
    <button style="margin-top:15px" (click)="gohome()">Go home</button>
-   <button *ngIf="notcreating; else creating" style="margin-top:15px" (click)="notcreating=false">Create market</button>
+
+   <div style="font-size:20px;margin-top:25px;">Add funds to user's account</div>
+   <input type="text" style="font-size:20px;margin-top:5px;" placeholder="username" [(ngModel)]="addToUsername">
+   <input type="number" style="font-size:20px;margin-top:1px;" placeholder="amount" [(ngModel)]="addAmount">
+   <button style="margin-top:5px" (click)="addFunds()">Add</button>
+
+   <div style="font-size:20px;margin-top:50px;cursor:pointer;" (click)="getAllEvents()">All events (upcoming resolves) &#x21bb;</div>
+   <button *ngIf="notcreating; else creating" style="margin-top:5px" (click)="notcreating=false">Create event</button>
    <ng-template #creating>
       <div style="width:280px;margin-top:15px;border:1px solid #000;display:flex;flex-direction:column;padding:10px;">
-         <div style="font-weight:bold;text-align:center;">Create market</div>
+         <div style="font-weight:bold;text-align:center;">Create event</div>
          <div style="margin-top:10px">Categories</div>
          <div style="display:flex;flex-direction:row;margin-top:5px;flex-wrap:wrap;">
             <div *ngFor="let c1 of (qs.cats | keyvalue)" style="margin-right:10px;display:flex;flex-direction:row">
@@ -26,12 +33,12 @@
                </div>
             </ng-container>
          </div>
-         <div style="margin-top:10px">Market name</div>
+         <div style="margin-top:10px">Event name</div>
          <input type="text" placeholder="Arsenal vs Chelsea" [(ngModel)]="eventname">
-         <div style="margin-top:10px">Side 1 name &amp; decimal odds</div>
+         <div style="margin-top:10px">Side 1 name &amp; decimal odds (remove vig)</div>
          <input type="text" placeholder="Arsenal" [(ngModel)]="side1name">
          <input style="margin-top:1px" type="number" placeholder="1.54" [(ngModel)]="side1odds">
-         <div style="margin-top:10px">Side 2 name &amp; decimal odds</div>
+         <div style="margin-top:10px">Side 2 name &amp; decimal odds (remove vig)</div>
          <input type="text" placeholder="Chelsea" [(ngModel)]="side2name">
          <input style="margin-top:1px" type="number" placeholder="2.86" [(ngModel)]="side2odds">
          <div style="margin-top:10px">Estimated resolve datetime</div>
@@ -41,9 +48,7 @@
          <button style="margin-top:5px" (click)="notcreating=true">Cancel</button>
       </div>
    </ng-template>
-   
-   <div style="font-size:20px;margin-top:50px;cursor:pointer;" (click)="getAllEvents()">All markets (upcoming resolves) &#x21bb;</div>
-   <div style="margin-top:15px">
+   <div style="margin-top:5px">
       <div *ngFor="let event of (qs.events$ | async)" style="padding-top:5px;margin-bottom:10px;border-top:1px solid #000;">
          <div>{{event.name}}</div>
          <div style="margin-top:3px">

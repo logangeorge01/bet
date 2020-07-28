@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
-import { AngularFirestore } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
+import { QueriesService } from 'src/app/services/queries.service';
 
 @Component({
   selector: 'app-login',
@@ -20,8 +20,8 @@ export class LoginComponent implements OnInit {
 
    constructor(
       private auth: AuthService,
-      private db: AngularFirestore,
-      private router: Router
+      private router: Router,
+      private qs: QueriesService
    ) { }
 
    ngOnInit() {
@@ -50,12 +50,13 @@ export class LoginComponent implements OnInit {
       } else if (this.password !== this.confpassword) {
          alert('Passwords must match');
       } else {
-         this.db.collection('usernames', ref => ref.where('username', '==', this.uname)).get().toPromise().then(docsSS => {
-            if (!docsSS.empty) {
+         this.qs.checkUname(this.uname).then(exists => {
+            if (exists) {
                alert('Username already exists');
             } else {
                this.auth.signUp(this.uname, this.email, this.password).then(() =>
-                  this.router.navigate([''])).catch(err => alert(err.message));
+                  this.router.navigate([''])).catch(err => alert(err.message)
+               );
             }
          });
       }
