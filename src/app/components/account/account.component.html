@@ -3,4 +3,12 @@
    <div style="margin-top:8px">Balance: ${{user.balance.toFixed(2)}}</div>
    <button style="margin-top:15px" (click)="gohome()">Go home</button>
    <button style="margin-top:15px" (click)="logout()">Logout</button>
+
+   <div style="font-size:20px;margin-top:25px;">Your bets</div>
+   <div style="margin-top:5px;width:250px;">
+      <div *ngFor="let betObj of qs.userBets" style="padding:5px;border:1px solid #000;border-radius:5px;width:100%;margin-bottom:5px;width:100%;">
+         <div>{{betObj.bet.event + ' (' + betObj.bet[betObj.cora].side + ' ' + (100/(betObj.bet.pot/betObj.bet[betObj.cora].amount) | number:'1.0-0') + '%)'}}</div>
+         <div style="font-weight:bold;">Bet ${{(betObj.bet.pot-betObj.bet[betObj.cora].amount).toFixed(2)}} to win ${{betObj.bet.pot.toFixed(2)}}</div>
+      </div>
+   </div>
 </div>

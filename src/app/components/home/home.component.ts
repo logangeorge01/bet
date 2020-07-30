@@ -20,6 +20,10 @@ export class HomeComponent implements OnInit {
    csideindexp1: number;
    camount = 5;
 
+   filter1: string;
+   filter2: string;
+   filter3: string;
+
    constructor(
       private auth: AuthService,
       private router: Router,
@@ -87,6 +91,11 @@ export class HomeComponent implements OnInit {
 
    changeAmount(delta: number) {
       this.camount += delta;
+   }
+
+   acceptBet(bet: Bet, uid: string) {
+      bet.acceptor.uid = uid;
+      this.qs.acceptBet(bet);
    }
 
 }

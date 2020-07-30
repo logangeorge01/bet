@@ -72,4 +72,10 @@ export class AdminComponent implements OnInit {
       });
    }
 
+   clearOpts() {
+      this.cat1 = null;
+      this.cat2 = null;
+      this.cat3 = null;
+   }
+
 }

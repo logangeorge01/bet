@@ -1,4 +1,5 @@
 import { firestore } from 'firebase';
+import { inherits } from 'util';
 
 export class User {
    uid: string;
@@ -10,6 +11,7 @@ export class User {
 }
 
 export class Bet {
+   betID?: string;
    event: string;
    eventID: string;
    cat1: string;
@@ -17,22 +19,23 @@ export class Bet {
    cat3: string;
    creator: {
       uid: string;
-      username: string;
+      username: string; // do we want to show this on home feed
       amount: number;
       side: string;
    };
    acceptor: {
       uid?: string;
-      username?: string;
+      // username?: string; // probably not necessary
       amount: number;
       side: string;
    };
    pot: number;
-   status: number; // 0-open, 1-active, 2-resolved,
+   status: number; // 0-open, 1-active, 2-resolved, necessary?
    dtCreated: string | firestore.Timestamp;
 }
 
 export class Event {
+   eventID?: string;
    name: string;
    sides: {
       name: string;
@@ -40,8 +43,12 @@ export class Event {
    }[];
    estResolve: string | Date;
    current: boolean;
-   eventID?: string;
    cat1: string;
    cat2: string;
    cat3: string;
+}
+
+export class UserBet {
+   betID: string;
+   cora: string;
 }
