@@ -8,7 +8,6 @@ import { firestore } from 'firebase/app';
 @Injectable({ providedIn: 'root' })
 export class QueriesService {
    allBets$: Observable<Bet[]>;
-   filterBets$: Observable<Bet[]>;
    userBets: {
       bet: Bet,
       cora: string
@@ -36,7 +35,7 @@ export class QueriesService {
       );
    }*/
    getBetsFromCat(lvl: string, cat: string) {
-      this.filterBets$ = this.allBets$.pipe(
+      this.allBets$ = this.allBets$.pipe(
          map(bets => bets.filter(bet => bet[lvl] === cat))
       );
    }

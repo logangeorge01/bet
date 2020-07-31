@@ -98,4 +98,16 @@ export class HomeComponent implements OnInit {
       this.qs.acceptBet(bet);
    }
 
+   clearFilters() {
+      this.filter1 = null;
+      this.filter2 = null;
+      this.filter3 = null;
+      this.qs.getAllBets();
+   }
+
+   handleFilter(lvl: number, cat: string) {
+      this[`filter${lvl}`] = cat;
+      this.qs.getBetsFromCat(`cat${lvl}`, cat);
+   }
+
 }

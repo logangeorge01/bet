@@ -1,18 +1,18 @@
 <div style="max-width:375px;display:flex;flex-direction:column;align-items:center;margin:0 auto;">
    <div style="font-size:25px">Wager</div>
    <ng-container *ngIf="onLogin; else signuptemp">
-      <input type="text" placeholder="Email" [(ngModel)]="loginemail"><!--eventually email or username-->
-      <input type="password" placeholder="Password" [(ngModel)]="loginpassword">
-      <button (click)="login()">Login</button>
-      <hr style="width:40%">
+      <input style="margin-top:15px" type="text" placeholder="Email" [(ngModel)]="loginemail"><!--eventually email or username-->
+      <input style="margin-top:1px" type="password" placeholder="Password" [(ngModel)]="loginpassword">
+      <button style="margin-top:5px" (click)="login()">Login</button>
+      <hr style="width:40%;margin:30px 0;">
       <button (click)="onLogin=false">Sign up</button>
    </ng-container>
    <ng-template #signuptemp>
-      <input type="text" placeholder="Username" [(ngModel)]="uname">
-      <input type="email" placeholder="Email" [(ngModel)]="email">
-      <input type="password" placeholder="Password" [(ngModel)]="password">
-      <input type="password" placeholder="Confirm password" [(ngModel)]="confpassword">
-      <button (click)="signup()">Sign up</button><br>
-      <button (click)="onLogin=true">Cancel</button>
+      <input style="margin-top:15px" type="text" placeholder="Username" [(ngModel)]="uname">
+      <input style="margin-top:1px" type="email" placeholder="Email" [(ngModel)]="email">
+      <input style="margin-top:1px" type="password" placeholder="Password" [(ngModel)]="password">
+      <input style="margin-top:1px" type="password" placeholder="Confirm password" [(ngModel)]="confpassword">
+      <button style="margin-top:5px" (click)="signup()">Sign up</button>
+      <button style="margin-top:15px" (click)="onLogin=true">Cancel</button>
    </ng-template>
 </div>

@@ -11,42 +11,50 @@
       </button>
       <button style="margin-top:15px" (click)="startNewBet()">Place new bet</button>
 
-      <div style="margin-top:15px">Filter categories</div>
-      <div style="margin-top:10px;display:flex;flex-direction:row;align-items:center;">
-         <div>Categories</div>
-         <div style="cursor:pointer;margin-left:5px;" (click)="clearOpts()">(<u>clear</u>)</div>
+      <div style="margin-top:15px;display:flex;flex-direction:row;align-items:center;">
+         <div>Filter categories</div>
+         <div *ngIf="this.filter1" style="cursor:pointer;margin-left:5px;" (click)="clearFilters()">(<u>clear</u>)</div>
       </div>
-      <div *ngIf="!this.cat1" style="display:flex;flex-direction:row;margin-top:3px;flex-wrap:wrap;">
-         <div *ngFor="let c1 of (qs.cats | keyvalue)" (click)="this.cat1=c1.key" style="background-color:#000;color:#fff;padding:3px 5px;border-radius:3px;margin:1px;cursor:pointer;">
+      <div *ngIf="!this.filter1" style="display:flex;flex-direction:row;margin-top:3px;flex-wrap:wrap;">
+         <div *ngFor="let c1 of (qs.cats | keyvalue)" (click)="handleFilter(1, c1.key)" style="background-color:#000;color:#fff;padding:3px 5px;border-radius:3px;margin:1px;cursor:pointer;">
             {{c1.key}}
          </div>
       </div>
-      <div *ngIf="this.cat1 && !this.cat2" style="display:flex;flex-direction:row;margin-top:3px;flex-wrap:wrap;">
-         <div *ngFor="let c2 of (qs.cats[cat1] | keyvalue)" (click)="this.cat2=c2.key" style="background-color:#000;color:#fff;padding:3px 5px;border-radius:3px;margin:1px;cursor:pointer;">
+      <div *ngIf="this.filter1 && !this.filter2" style="display:flex;flex-direction:row;margin-top:3px;flex-wrap:wrap;">
+         <div *ngFor="let c2 of (qs.cats[filter1] | keyvalue)" (click)="handleFilter(2, c2.key)" style="background-color:#000;color:#fff;padding:3px 5px;border-radius:3px;margin:1px;cursor:pointer;">
             {{c2.key}}
          </div>
       </div>
-      <div *ngIf="this.cat2" style="display:flex;flex-direction:row;margin-top:3px;flex-wrap:wrap;">
-         <div *ngFor="let c3 of (qs.cats[cat1][cat2] | keyvalue)" (click)="getCatOpts(c3.key)" style="background-color:#000;color:#fff;padding:3px 5px;border-radius:3px;margin:1px;cursor:pointer;">
+      <div *ngIf="this.filter2" style="display:flex;flex-direction:row;margin-top:3px;flex-wrap:wrap;">
+         <div *ngFor="let c3 of (qs.cats[filter1][filter2] | keyvalue)" (click)="handleFilter(3, c3.key)" style="background-color:#000;color:#fff;padding:3px 5px;border-radius:3px;margin:1px;cursor:pointer;">
             {{c3.key}}
          </div>
       </div>
 
-      <div style="margin-top:25px">
+      <div *ngIf="(qs.allBets$ | async)?.length; else nobets" style="margin-top:25px">
          <div *ngFor="let bet of (qs.allBets$ | async)" style="display:flex;flex-direction:row;margin-bottom:5px;">
-            <div style="padding:5px;border:1px solid #000;border-radius:5px 0 0 5px;width:100%;">
-               <div>{{bet.event + ' (' + bet.acceptor.side + ' ' + (100/(bet.pot/bet.acceptor.amount) | number:'1.0-0') + '%)'}}</div>
-               <div style="font-weight:bold;">Bet ${{(bet.pot-bet.creator.amount).toFixed(2)}} to win ${{bet.pot.toFixed(2)}}</div>
-               <!-- <div style="display:flex;flex-direction:row;justify-content:space-between;margin-top:3px;">
-                  <div>{{bet.creator.username}}</div>
-                  <div style="font-weight:bold;">bet ${{(bet.pot-bet.creator.amount).toFixed(2)}} to win ${{bet.pot.toFixed(2)}}</div>
-               </div> -->
-            </div>
-            <div (click)="acceptBet(bet)" style="background-color:#000;color:#fff;border-radius:0 5px 5px 0;display:flex;align-items:center;padding:0 10px;cursor:pointer;">
-               Bet
-            </div>
+            <ng-container *ngIf="bet.creator.uid!==user.uid; else mybet">
+               <div style="padding:5px;border:1px solid #000;border-radius:5px 0 0 5px;width:100%;">
+                  <div>{{bet.event + ' (' + bet.acceptor.side + ' ' + (100/(bet.pot/bet.acceptor.amount) | number:'1.0-0') + '%)'}}</div>
+                  <div style="font-weight:bold;">Bet ${{(bet.pot-bet.creator.amount).toFixed(2)}} to win ${{bet.pot.toFixed(2)}}</div>
+                  <!-- <div style="display:flex;flex-direction:row;justify-content:space-between;margin-top:3px;">
+                     <div>{{bet.creator.username}}</div>
+                     <div style="font-weight:bold;">bet ${{(bet.pot-bet.creator.amount).toFixed(2)}} to win ${{bet.pot.toFixed(2)}}</div>
+                  </div> -->
+               </div>
+               <div (click)="acceptBet(bet)" style="background-color:#000;color:#fff;border-radius:0 5px 5px 0;display:flex;align-items:center;padding:0 10px;cursor:pointer;">
+                  Bet
+               </div>
+            </ng-container>
+            <ng-template #mybet>
+               <div style="padding:5px;border:1px solid #000;border-radius:5px;width:100%;">Your bet</div>
+            </ng-template>
          </div>
       </div>
+
+      <ng-template #nobets>
+         <div style="margin-top:25px">No open bets with that filter.</div>
+      </ng-template>
 </ng-template>
 
 
@@ -56,7 +64,7 @@
 
       <div style="margin-top:10px;display:flex;flex-direction:row;align-items:center;">
          <div>Categories</div>
-         <div style="cursor:pointer;margin-left:5px;" (click)="clearOpts()">(<u>clear</u>)</div>
+         <div *ngIf="this.cat1" style="cursor:pointer;margin-left:5px;" (click)="clearOpts()">(<u>clear</u>)</div>
       </div>
       <div *ngIf="!this.cat1" style="display:flex;flex-direction:row;margin-top:3px;flex-wrap:wrap;">
          <div *ngFor="let c1 of (qs.cats | keyvalue)" (click)="this.cat1=c1.key" style="background-color:#000;color:#fff;padding:3px 5px;border-radius:3px;margin:1px;cursor:pointer;">
