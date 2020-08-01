@@ -93,9 +93,13 @@ export class HomeComponent implements OnInit {
       this.camount += delta;
    }
 
-   acceptBet(bet: Bet, uid: string) {
-      bet.acceptor.uid = uid;
-      this.qs.acceptBet(bet);
+   acceptBet(bet: Bet, user: User) {
+      if (bet.acceptor.amount > user.balance) {
+         alert('Insufficient funds. You can add more from your account page.');
+         return;
+      }
+      bet.acceptor.uid = user.uid;
+      this.qs.acceptBet(bet).then(() => alert('Bet accepted successfully. You can view it on your account page.'));
    }
 
    clearFilters() {

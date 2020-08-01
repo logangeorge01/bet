@@ -65,14 +65,16 @@ export class QueriesService {
          } as UserBet);
       });
    }
-   acceptBet(bet: Bet) {
-      this.db.collection('users').doc(bet.acceptor.uid).collection('bets').add({
-         betID: bet.betID,
-         cora: 'acceptor'
-      } as UserBet);
-      this.db.collection('allbets').doc(bet.betID).update({status: 1});
-
-      // FINISH
+   acceptBet(bet: Bet): Promise<any> {
+      const uref = this.db.collection('users').doc(bet.acceptor.uid);
+      return Promise.all([
+         uref.collection('bets').add({
+            betID: bet.betID,
+            cora: 'acceptor'
+         } as UserBet),
+         uref.update({balance: firestore.FieldValue.increment(-1 * bet.acceptor.amount)}),
+         this.db.collection('allbets').doc(bet.betID).update({status: 1})
+      ]);
    }
 
    getAllEvents() {

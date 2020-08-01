@@ -7,7 +7,7 @@
    <div style="font-size:25px">Wager</div>
       <button *ngIf="user.admin" style="margin-top:15px" (click)="gotoadmin()">ADMIN</button>
       <button style="margin-top:15px" (click)="gotoaccount()">
-         {{user.username + ' $' + user.balance}}
+         {{user.username + ' $' + user.balance.toFixed(2)}}
       </button>
       <button style="margin-top:15px" (click)="startNewBet()">Place new bet</button>
 
@@ -42,7 +42,7 @@
                      <div style="font-weight:bold;">bet ${{(bet.pot-bet.creator.amount).toFixed(2)}} to win ${{bet.pot.toFixed(2)}}</div>
                   </div> -->
                </div>
-               <div (click)="acceptBet(bet)" style="background-color:#000;color:#fff;border-radius:0 5px 5px 0;display:flex;align-items:center;padding:0 10px;cursor:pointer;">
+               <div (click)="acceptBet(bet, user)" style="background-color:#000;color:#fff;border-radius:0 5px 5px 0;display:flex;align-items:center;padding:0 10px;cursor:pointer;">
                   Bet
                </div>
             </ng-container>
