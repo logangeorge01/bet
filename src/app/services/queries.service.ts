@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Bet, Event, UserBet } from '../types';
+import { Bet, Event, UserBet, Withdraw } from '../types';
 import { AngularFirestore, DocumentData } from '@angular/fire/firestore';
 import { map, switchMap } from 'rxjs/operators';
 import { firestore } from 'firebase/app';
@@ -98,14 +98,25 @@ export class QueriesService {
    addFunds(uname: string, amount: number): Promise<any> {
       return this.checkUname(uname).then(exists => {
          if (exists) {
-            this.db.collection('users', ref => ref.where('username', '==', uname)).get().toPromise().then(docSS =>
-               docSS.docs[0].ref.update({balance: firestore.FieldValue.increment(amount)})
-            );
+            return Promise.all([
+               this.db.collection('users', ref => ref.where('username', '==', uname)).get().toPromise().then(docSS =>
+                  docSS.docs[0].ref.update({balance: firestore.FieldValue.increment(amount)})
+               ),
+               this.db.collection('total').doc('total').update({siteTotal: firestore.FieldValue.increment(amount)})
+            ]);
          }
       });
    }
 
    checkUname(uname: string): Promise<boolean> {
       return this.db.collection('usernames', ref => ref.where('username', '==', uname)).get().toPromise().then(docsSS => !docsSS.empty);
+   }
+
+   withdrawFromUser(wd: Withdraw): Promise<any> {
+      return Promise.all([
+         this.db.collection('total').doc('total').update({siteTotal: firestore.FieldValue.increment(-1 * wd.amount)}),
+         this.db.collection('users').doc(wd.uid).update({balance: firestore.FieldValue.increment(-1 * wd.amount)}),
+         this.db.collection('withdrawals').add(wd)
+      ]);
    }
 }

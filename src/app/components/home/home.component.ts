@@ -32,6 +32,11 @@ export class HomeComponent implements OnInit {
 
    ngOnInit() {
       this.qs.getAllBets();
+      this.auth.user$.subscribe(user => {
+         if (user.balance === 0) {
+            alert('Add funds on your account page so you can bet!');
+         }
+      });
    }
 
    gotoaccount() {

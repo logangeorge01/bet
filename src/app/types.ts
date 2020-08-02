@@ -52,3 +52,11 @@ export class UserBet {
    betID: string;
    cora: string;
 }
+
+export class Withdraw {
+   uid: string;
+   amount: number;
+   method: string;
+   methodUname: string;
+   status: number; // 0-open, 1-closed
+}

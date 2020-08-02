@@ -1,14 +1,14 @@
 <div *ngIf="(auth.user$ | async) as user" style="max-width:375px;display:flex;flex-direction:column;align-items:center;margin:0 auto;">
    <ng-container *ngIf="notcreating; else creating">
-      <div style="font-size:25px">Admin</div>
+      <div style="font-size:25px;font-weight:600;">Admin</div>
       <button style="margin-top:15px" (click)="gohome()">Go home</button>
 
-      <div style="font-size:20px;margin-top:25px;">Add funds to user's account</div>
+      <div style="font-size:20px;margin-top:25px;font-weight:600;">Add funds to user's account</div>
       <input type="text" style="font-size:20px;margin-top:5px;" placeholder="username" [(ngModel)]="addToUsername">
       <input type="number" style="font-size:20px;margin-top:1px;" placeholder="amount" [(ngModel)]="addAmount">
       <button style="margin-top:5px" (click)="addFunds()">Add</button>
 
-      <div style="font-size:20px;margin-top:50px;cursor:pointer;" (click)="getAllEvents()">All events (upcoming resolves) &#x21bb;</div>
+      <div style="font-size:20px;font-weight:600;margin-top:50px;cursor:pointer;" (click)="getAllEvents()">All events (upcoming resolves) &#x21bb;</div>
       <button style="margin-top:5px" (click)="notcreating=false">Create event</button>
       
       <div style="margin-top:5px">
@@ -28,7 +28,7 @@
 
 <ng-template #creating>
    <div style="width:280px;margin-top:15px;border:1px solid #000;display:flex;flex-direction:column;padding:10px;">
-      <div style="font-weight:bold">Create event</div>
+      <div style="font-weight:600;font-size:20px;align-self:center;">Create event</div>
       <div style="margin-top:10px;display:flex;flex-direction:row;align-items:center;">
          <div>Categories</div>
          <div *ngIf="this.cat1" style="cursor:pointer;margin-left:5px;" (click)="clearOpts()">(<u>clear</u>)</div>
@@ -62,7 +62,7 @@
       <div style="margin-top:10px">Estimated resolve datetime</div>
       <input type="datetime-local" [(ngModel)]="estres">
 
-      <button style="margin-top:10px;font-weight:bold;" (click)="createMarket()">Create</button>
+      <button style="margin-top:10px;font-weight:600;" (click)="createMarket()">Create</button>
       <button style="margin-top:5px" (click)="notcreating=true">Cancel</button>
    </div>
 </ng-template>

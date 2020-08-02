@@ -3,6 +3,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { QueriesService } from 'src/app/services/queries.service';
+import { Withdraw } from 'src/app/types';
 
 @Component({
   selector: 'app-account',
@@ -10,6 +11,11 @@ import { QueriesService } from 'src/app/services/queries.service';
   styleUrls: ['./account.component.css']
 })
 export class AccountComponent implements OnInit {
+   withOpen = false;
+
+   wdMethod: string;
+   wdUsername: string;
+   wdAmount: number;
 
    constructor(
       private auth: AuthService,
@@ -21,15 +27,29 @@ export class AccountComponent implements OnInit {
       this.auth.user$.subscribe(user => this.qs.getUsersBets(user.uid));
    }
 
-   /*getUserBets(uid: string) {
-      this.qs.getUsersBets(uid);
-   }*/
-
    gohome() {
       this.router.navigate(['']);
    }
 
    logout() {
       this.auth.signOut();
+   }
+
+   checkWithdraw() {
+      return this.wdMethod && this.wdUsername && this.wdAmount;
+   }
+
+   withdraw(uid: string) {
+      const wd = {
+         uid,
+         amount: Math.round((this.wdAmount + Number.EPSILON) * 100) / 100,
+         method: this.wdMethod,
+         methodUname: this.wdUsername,
+         status: 0
+      } as Withdraw;
+      this.qs.withdrawFromUser(wd).then(() => {
+         alert('Success! You\'ll receive your money soon.');
+         this.withOpen = false;
+      });
    }
 }

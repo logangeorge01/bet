@@ -1,14 +1,55 @@
 <div *ngIf="(auth.user$ | async) as user" style="max-width:375px;display:flex;flex-direction:column;align-items:center;margin:0 auto;">
-   <div style="font-size:25px">{{user.username}}</div>
+   <ng-container [ngTemplateOutlet]="this.withOpen ? withdrawtemp : account" [ngTemplateOutletContext]="{user:user}">
+   </ng-container>
+</div>
+
+<ng-template #account let-user="user">
+   <div style="font-weight:600;font-size:25px">{{user.username}}</div>
    <div style="margin-top:8px">Balance: ${{user.balance.toFixed(2)}}</div>
    <button style="margin-top:15px" (click)="gohome()">Go home</button>
    <button style="margin-top:15px" (click)="logout()">Logout</button>
+   <button style="margin-top:15px" (click)="this.withOpen=true">Withdraw money</button>
 
-   <div style="font-size:20px;margin-top:25px;">Your bets</div>
+   <div style="font-weight:600;margin-top:25px;font-size:20px">How to add funds</div>
+   <div style="margin-top:3px">
+      It's easy to add money to your account. Simply Venmo or Cash App 
+      us @wager with your Wager username ({{user.username}}) as the message, 
+      and the funds will added to your account promptly. If you send us money 
+      without your username as the message, we will return it to you.
+   </div>
+
+   <div style="font-weight:600;font-size:20px;margin-top:25px;">Your bets</div>
    <div style="margin-top:5px;width:250px;">
       <div *ngFor="let betObj of qs.userBets" style="padding:5px;border:1px solid #000;border-radius:5px;width:100%;margin-bottom:5px;width:100%;">
          <div>{{betObj.bet.event + ' (' + betObj.bet[betObj.cora].side + ' ' + (100/(betObj.bet.pot/betObj.bet[betObj.cora].amount) | number:'1.0-0') + '%)'}}</div>
-         <div style="font-weight:bold;">Bet ${{(betObj.bet.pot-betObj.bet[betObj.cora].amount).toFixed(2)}} to win ${{betObj.bet.pot.toFixed(2)}}</div>
+         <div style="font-weight:600">Bet ${{(betObj.bet.pot-betObj.bet[betObj.cora].amount).toFixed(2)}} to win ${{betObj.bet.pot.toFixed(2)}}</div>
       </div>
    </div>
-</div>
+</ng-template>
+
+<ng-template #withdrawtemp let-user="user">
+   <div style="width:280px;margin-top:15px;border:1px solid #000;display:flex;flex-direction:column;padding:10px;">
+      <div style="font-weight:600;font-size:20px;align-self:center;">Withdraw funds</div>
+      <div style="margin-top:5px">To request a withdrawal, choose a method, amount, and let us know what username to send it to.</div>
+      <div style="margin-top:10px">Amount</div>
+      <div style="margin-top:3px;display:flex;flex-direction:row;">
+         <ng-container *ngIf="!this.wdMethod; else method">
+            <div *ngIf="!this.wdMethod" (click)="this.wdMethod='Venmo'" style="background-color:#000;color:#fff;padding:3px 5px;border-radius:3px;margin:1px;cursor:pointer;">Venmo</div>
+            <div *ngIf="!this.wdMethod" (click)="this.wdMethod='Cash App'" style="background-color:#000;color:#fff;padding:3px 5px;border-radius:3px;margin:1px;cursor:pointer;">Cash App</div>
+         </ng-container>
+         <ng-template #method>
+            <div *ngIf="this.wdMethod" style="background-color:#000;color:#fff;padding:3px 5px;border-radius:3px;margin:1px;cursor:default;">{{this.wdMethod}}</div>
+            <div *ngIf="this.wdMethod" (click)="this.wdMethod=null" style="padding:3px 5px;margin:1px;cursor:pointer;">(clear)</div>
+         </ng-template>
+      </div>
+      <div style="margin-top:7px">{{this.wdMethod}} Username</div>
+      <div>@<input type="text" [placeholder]="user.username" [(ngModel)]="wdUsername"></div>
+      <div style="margin-top:7px">Amount (Current balance: ${{user.balance.toFixed(2)}})</div>
+      <div>$<input type="number" [placeholder]="user.balance.toFixed(2)" [(ngModel)]="wdAmount"></div>
+
+      <button style="margin-top:15px" (click)="this.withOpen=false">Cancel</button>
+      <button *ngIf="checkWithdraw()" style="margin-top:5px;font-weight:600;" (click)="withdraw(user.uid)" [disabled]="this.wdAmount>user.balance">
+         {{this.wdAmount > user.balance ? 'Amount greater than balance' : 'Withdraw'}}
+      </button>
+   </div>
+</ng-template>
