@@ -34,6 +34,7 @@ export class AdminComponent implements OnInit {
    ngOnInit() {
       this.loadEvs();
       this.qs.getSiteData();
+      this.qs.getWithdrawals();
    }
 
    createMarket() {
@@ -79,4 +80,7 @@ export class AdminComponent implements OnInit {
       this.cat3 = null;
    }
 
+   closeWD(wdID: string) {
+      this.qs.closeWithdrawal(wdID).then(() => this.qs.getWithdrawals());
+   }
 }

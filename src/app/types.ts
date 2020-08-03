@@ -54,11 +54,13 @@ export class UserBet {
 }
 
 export class Withdraw {
+   wdID?: string;
    uid: string;
    amount: number;
    method: string;
    methodUname: string;
    status: number; // 0-open, 1-closed
+   dtRequested: string | firestore.Timestamp;
 }
 
 export class SiteData {

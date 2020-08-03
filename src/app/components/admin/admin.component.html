@@ -2,17 +2,23 @@
    <ng-container *ngIf="notcreating; else creating">
       <div style="font-size:25px;font-weight:600;">Admin</div>
       <ng-container *ngIf="(qs.siteData$ | async) as sd">
-         <div style="margin-top:15px">Site total: ${{sd.siteTotal}} | Our money: ${{sd.ourMoney}}</div>
+         <div style="margin-top:15px">Site total: ${{sd.siteTotal.toFixed(2)}} | Our money: ${{sd.ourMoney.toFixed(2)}}</div>
       </ng-container>
       <button style="margin-top:15px" (click)="gohome()">Go home</button>
+      <button style="margin-top:15px" (click)="notcreating=false">Create event</button>
 
       <div style="font-size:20px;margin-top:25px;font-weight:600;">Add funds to user's account</div>
       <input type="text" style="font-size:20px;margin-top:5px;" placeholder="username" [(ngModel)]="addToUsername">
       <input type="number" style="font-size:20px;margin-top:1px;" placeholder="amount" [(ngModel)]="addAmount">
       <button style="margin-top:5px" (click)="addFunds()">Add</button>
 
-      <div style="font-size:20px;font-weight:600;margin-top:50px;cursor:pointer;" (click)="getAllEvents()">All events (upcoming resolves) &#x21bb;</div>
-      <button style="margin-top:5px" (click)="notcreating=false">Create event</button>
+      <div *ngIf="(qs.withdrawals$ | async)?.length" style="font-size:20px;margin-top:25px;font-weight:600;">Requested withdrawals</div>
+      <div *ngFor="let wd of (qs.withdrawals$ | async)" style="display:flex;flex-direction:row;margin-top:5px;">
+         {{wd.method + ' ' + wd.methodUname + ' $' + wd.amount.toFixed(2)}}
+         <button style="margin-left:10px" (click)="closeWD(wd.wdID)">Done</button>
+      </div>
+
+      <div style="font-size:20px;font-weight:600;margin-top:25px;">Upcoming event resolves</div>
       
       <div style="margin-top:5px">
          <div *ngFor="let event of (qs.events$ | async)" style="padding-top:5px;margin-bottom:10px;border-top:1px solid #000;">

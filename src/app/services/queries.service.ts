@@ -16,6 +16,7 @@ export class QueriesService {
    filterEvents$: Observable<Event[]>;
    cats: any;
    siteData$: Observable<SiteData>;
+   withdrawals$: Observable<Withdraw[]>;
 
    constructor(
       private db: AngularFirestore
@@ -103,7 +104,7 @@ export class QueriesService {
                this.db.collection('users', ref => ref.where('username', '==', uname)).get().toPromise().then(docSS =>
                   docSS.docs[0].ref.update({balance: firestore.FieldValue.increment(amount)})
                ),
-               this.db.collection('total').doc('total').update({siteTotal: firestore.FieldValue.increment(amount)})
+               this.db.collection('data').doc('data').update({siteTotal: firestore.FieldValue.increment(amount)})
             ]);
          }
       });
@@ -113,9 +114,17 @@ export class QueriesService {
       return this.db.collection('usernames', ref => ref.where('username', '==', uname)).get().toPromise().then(docsSS => !docsSS.empty);
    }
 
+   getWithdrawals() {
+      this.withdrawals$ = this.db.collection('withdrawals', ref => ref.where('status', '==', 0)).get().pipe(
+         map(docsSS => docsSS.docs.map(docSS => ({...docSS.data(), wdID: docSS.id} as Withdraw)))
+      );
+   }
+   closeWithdrawal(wdID: string): Promise<any> {
+      return this.db.collection('withdrawals').doc(wdID).update({status: 1});
+   }
    withdrawFromUser(wd: Withdraw): Promise<any> {
       return Promise.all([
-         this.db.collection('total').doc('total').update({siteTotal: firestore.FieldValue.increment(-1 * wd.amount)}),
+         this.db.collection('data').doc('data').update({siteTotal: firestore.FieldValue.increment(-1 * wd.amount)}),
          this.db.collection('users').doc(wd.uid).update({balance: firestore.FieldValue.increment(-1 * wd.amount)}),
          this.db.collection('withdrawals').add(wd)
       ]);
@@ -124,6 +133,6 @@ export class QueriesService {
    getSiteData() {
       this.siteData$ = this.db.collection('data').doc('data').get().pipe(
          map(docSS => docSS.data() as SiteData)
-      )
+      );
    }
 }

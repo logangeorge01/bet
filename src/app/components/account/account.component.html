@@ -8,7 +8,7 @@
    <div style="margin-top:8px">Balance: ${{user.balance.toFixed(2)}}</div>
    <button style="margin-top:15px" (click)="gohome()">Go home</button>
    <button style="margin-top:15px" (click)="logout()">Logout</button>
-   <button style="margin-top:15px" (click)="this.withOpen=true">Withdraw money</button>
+   <button style="margin-top:15px" (click)="this.withOpen=true">Withdraw funds</button>
 
    <div style="font-weight:600;margin-top:25px;font-size:20px">How to add funds</div>
    <div style="margin-top:3px">
@@ -44,7 +44,7 @@
       </div>
       <div style="margin-top:7px">{{this.wdMethod}} Username</div>
       <div>@<input type="text" [placeholder]="user.username" [(ngModel)]="wdUsername"></div>
-      <div style="margin-top:7px">Amount (Current balance: ${{user.balance.toFixed(2)}})</div>
+      <div style="margin-top:7px">Amount (Balance: ${{user.balance.toFixed(2)}})</div>
       <div>$<input type="number" [placeholder]="user.balance.toFixed(2)" [(ngModel)]="wdAmount"></div>
 
       <button style="margin-top:15px" (click)="this.withOpen=false">Cancel</button>

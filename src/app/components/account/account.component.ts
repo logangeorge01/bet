@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { QueriesService } from 'src/app/services/queries.service';
 import { Withdraw } from 'src/app/types';
+import { firestore } from 'firebase';
 
 @Component({
   selector: 'app-account',
@@ -45,7 +46,8 @@ export class AccountComponent implements OnInit {
          amount: Math.round((this.wdAmount + Number.EPSILON) * 100) / 100,
          method: this.wdMethod,
          methodUname: this.wdUsername,
-         status: 0
+         status: 0,
+         dtRequested: firestore.Timestamp.now()
       } as Withdraw;
       this.qs.withdrawFromUser(wd).then(() => {
          alert('Success! You\'ll receive your money soon.');
