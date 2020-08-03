@@ -33,6 +33,7 @@ export class AdminComponent implements OnInit {
 
    ngOnInit() {
       this.loadEvs();
+      this.qs.getSiteData();
    }
 
    createMarket() {

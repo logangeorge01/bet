@@ -1,6 +1,9 @@
 <div *ngIf="(auth.user$ | async) as user" style="max-width:375px;display:flex;flex-direction:column;align-items:center;margin:0 auto;">
    <ng-container *ngIf="notcreating; else creating">
       <div style="font-size:25px;font-weight:600;">Admin</div>
+      <ng-container *ngIf="(qs.siteData$ | async) as sd">
+         <div style="margin-top:15px">Site total: ${{sd.siteTotal}} | Our money: ${{sd.ourMoney}}</div>
+      </ng-container>
       <button style="margin-top:15px" (click)="gohome()">Go home</button>
 
       <div style="font-size:20px;margin-top:25px;font-weight:600;">Add funds to user's account</div>

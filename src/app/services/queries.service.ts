@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Bet, Event, UserBet, Withdraw } from '../types';
+import { Bet, Event, UserBet, Withdraw, SiteData } from '../types';
 import { AngularFirestore, DocumentData } from '@angular/fire/firestore';
-import { map, switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { firestore } from 'firebase/app';
 
 @Injectable({ providedIn: 'root' })
@@ -15,6 +15,7 @@ export class QueriesService {
    events$: Observable<Event[]>;
    filterEvents$: Observable<Event[]>;
    cats: any;
+   siteData$: Observable<SiteData>;
 
    constructor(
       private db: AngularFirestore
@@ -118,5 +119,11 @@ export class QueriesService {
          this.db.collection('users').doc(wd.uid).update({balance: firestore.FieldValue.increment(-1 * wd.amount)}),
          this.db.collection('withdrawals').add(wd)
       ]);
+   }
+
+   getSiteData() {
+      this.siteData$ = this.db.collection('data').doc('data').get().pipe(
+         map(docSS => docSS.data() as SiteData)
+      )
    }
 }

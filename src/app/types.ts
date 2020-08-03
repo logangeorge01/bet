@@ -60,3 +60,8 @@ export class Withdraw {
    methodUname: string;
    status: number; // 0-open, 1-closed
 }
+
+export class SiteData {
+   siteTotal: number;
+   ourMoney: number;
+}
