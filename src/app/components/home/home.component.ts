@@ -72,7 +72,7 @@ export class HomeComponent implements OnInit {
             side: se.sides[2 - this.csideindexp1].name
          },
          pot,
-         status: 0,
+         open: true,
          dtCreated: firestore.Timestamp.now()
       } as Bet;
       this.qs.placeBet(bet).then(() => {
@@ -104,6 +104,7 @@ export class HomeComponent implements OnInit {
          return;
       }
       bet.acceptor.uid = user.uid;
+      bet.open = false;
       this.qs.acceptBet(bet).then(() => alert('Bet accepted successfully. You can view it on your account page.'));
    }
 

@@ -46,7 +46,7 @@ export class AccountComponent implements OnInit {
          amount: Math.round((this.wdAmount + Number.EPSILON) * 100) / 100,
          method: this.wdMethod,
          methodUname: this.wdUsername,
-         status: 0,
+         resolved: false,
          dtRequested: firestore.Timestamp.now()
       } as Withdraw;
       this.qs.withdrawFromUser(wd).then(() => {

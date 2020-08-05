@@ -98,18 +98,18 @@ export class QueriesService {
          const batch = this.db.firestore.batch();
          betsSS.docs.forEach(betSS => {
             const b = (betSS.data() as Bet);
-            if (b.status === 0) {
-               const uref = this.db.collection('users').doc(b.creator.uid).ref;
-               batch.update(uref, {balance: firestore.FieldValue.increment(b.creator.amount)});
-            } else if (b.status === 1) {
+            if (b.open) {
                const dataref = this.db.collection('data').doc('data').ref;
                const winner = sidename === b.creator.side ? 'creator' : 'acceptor';
                const uref = this.db.collection('users').doc(b[winner].uid).ref;
                const fee = Math.round((((b.pot - b[winner].amount) * .1) + Number.EPSILON) * 100) / 100;
                batch.update(uref, {balance: firestore.FieldValue.increment(b.pot - fee)});
                batch.update(dataref, {ourMoney: firestore.FieldValue.increment(fee), siteTotal: firestore.FieldValue.increment(-fee)});
+            } else {
+               const uref = this.db.collection('users').doc(b.creator.uid).ref;
+               batch.update(uref, {balance: firestore.FieldValue.increment(b.creator.amount)});
+               batch.update(betSS.ref, {open: false});
             }
-            batch.update(betSS.ref, {status: 2});
          });
          return Promise.resolve([
             this.db.collection('events').doc(eventID).update({current: false}),
@@ -140,12 +140,12 @@ export class QueriesService {
    }
 
    getWithdrawals() {
-      this.withdrawals$ = this.db.collection('withdrawals', ref => ref.where('status', '==', 0)).get().pipe(
+      this.withdrawals$ = this.db.collection('withdrawals', ref => ref.where('resolved', '==', false)).get().pipe(
          map(docsSS => docsSS.docs.map(docSS => ({...docSS.data(), wdID: docSS.id} as Withdraw)))
       );
    }
    closeWithdrawal(wdID: string): Promise<any> {
-      return this.db.collection('withdrawals').doc(wdID).update({status: 1});
+      return this.db.collection('withdrawals').doc(wdID).update({resolved: true});
    }
    withdrawFromUser(wd: Withdraw): Promise<any> {
       return Promise.all([

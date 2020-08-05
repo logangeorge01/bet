@@ -89,6 +89,7 @@ export class AdminComponent implements OnInit {
       this.qs.resolveEvent(eventID, sidename).then(() => {
          alert('Event resolved successfully');
          this.loadEvs();
+         this.qs.getSiteData();
       });
    }
 }

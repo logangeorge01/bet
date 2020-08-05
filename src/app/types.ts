@@ -30,7 +30,8 @@ export class Bet {
       side: string;
    };
    pot: number;
-   status: number; // 0-open, 1-active, 2-resolved, necessary?
+   open: boolean;
+   // status: number; // 0-open, 1-active, 2-resolved, necessary?
    dtCreated: string | firestore.Timestamp;
 }
 
@@ -51,6 +52,7 @@ export class Event {
 export class UserBet {
    betID: string;
    cora: string;
+   open: boolean;
 }
 
 export class Withdraw {
@@ -59,7 +61,7 @@ export class Withdraw {
    amount: number;
    method: string;
    methodUname: string;
-   status: number; // 0-open, 1-closed
+   resolved: boolean;
    dtRequested: string | firestore.Timestamp;
 }
 
