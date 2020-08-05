@@ -59,7 +59,7 @@ export class QueriesService {
       return this.db.collection('allbets').add(bet).then(betref => {
          const userref = this.db.collection('users').doc(bet.creator.uid);
          userref.update({
-            balance: firestore.FieldValue.increment(-1 * bet.creator.amount)
+            balance: firestore.FieldValue.increment(-bet.creator.amount)
          });
          userref.collection('bets').add({
             betID: betref.id,
@@ -74,13 +74,13 @@ export class QueriesService {
             betID: bet.betID,
             cora: 'acceptor'
          } as UserBet),
-         uref.update({balance: firestore.FieldValue.increment(-1 * bet.acceptor.amount)}),
-         this.db.collection('allbets').doc(bet.betID).update({status: 1})
+         uref.update({balance: firestore.FieldValue.increment(-bet.acceptor.amount)}),
+         this.db.collection('allbets').doc(bet.betID).update({uid: bet.acceptor.uid, status: 1})
       ]);
    }
 
    getAllEvents() {
-      this.events$ = this.db.collection('events', ref => ref.orderBy('estResolve')).get().pipe(
+      this.events$ = this.db.collection('events', ref => ref.where('current', '==', true).orderBy('estResolve')).get().pipe(
          map(eventsSS => eventsSS.docs.map(eventSS => ({...eventSS.data(), eventID: eventSS.id} as Event)))
       );
    }
@@ -91,6 +91,31 @@ export class QueriesService {
    }
    createEvent(event: Event): Promise<any> {
       return this.db.collection('events').add(event);
+   }
+   resolveEvent(eventID: string, sidename: string): Promise<any> {
+      const cref = this.db.collection('allbets', ref => ref.where('eventID', '==', eventID));
+      return cref.get().toPromise().then(betsSS => {
+         const batch = this.db.firestore.batch();
+         betsSS.docs.forEach(betSS => {
+            const b = (betSS.data() as Bet);
+            if (b.status === 0) {
+               const uref = this.db.collection('users').doc(b.creator.uid).ref;
+               batch.update(uref, {balance: firestore.FieldValue.increment(b.creator.amount)});
+            } else if (b.status === 1) {
+               const dataref = this.db.collection('data').doc('data').ref;
+               const winner = sidename === b.creator.side ? 'creator' : 'acceptor';
+               const uref = this.db.collection('users').doc(b[winner].uid).ref;
+               const fee = Math.round((((b.pot - b[winner].amount) * .1) + Number.EPSILON) * 100) / 100;
+               batch.update(uref, {balance: firestore.FieldValue.increment(b.pot - fee)});
+               batch.update(dataref, {ourMoney: firestore.FieldValue.increment(fee), siteTotal: firestore.FieldValue.increment(-fee)});
+            }
+            batch.update(betSS.ref, {status: 2});
+         });
+         return Promise.resolve([
+            this.db.collection('events').doc(eventID).update({current: false}),
+            batch.commit()
+         ]);
+      });
    }
 
    getCats() {
@@ -124,8 +149,8 @@ export class QueriesService {
    }
    withdrawFromUser(wd: Withdraw): Promise<any> {
       return Promise.all([
-         this.db.collection('data').doc('data').update({siteTotal: firestore.FieldValue.increment(-1 * wd.amount)}),
-         this.db.collection('users').doc(wd.uid).update({balance: firestore.FieldValue.increment(-1 * wd.amount)}),
+         this.db.collection('data').doc('data').update({siteTotal: firestore.FieldValue.increment(-wd.amount)}),
+         this.db.collection('users').doc(wd.uid).update({balance: firestore.FieldValue.increment(-wd.amount)}),
          this.db.collection('withdrawals').add(wd)
       ]);
    }

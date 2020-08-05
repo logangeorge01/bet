@@ -71,6 +71,7 @@ export class AdminComponent implements OnInit {
       this.qs.addFunds(this.addToUsername, this.addAmount).then(() => {
          this.addToUsername = null;
          this.addAmount = null;
+         this.qs.getSiteData();
       });
    }
 
@@ -82,5 +83,12 @@ export class AdminComponent implements OnInit {
 
    closeWD(wdID: string) {
       this.qs.closeWithdrawal(wdID).then(() => this.qs.getWithdrawals());
+   }
+
+   resolve(eventID: string, sidename: string) {
+      this.qs.resolveEvent(eventID, sidename).then(() => {
+         alert('Event resolved successfully');
+         this.loadEvs();
+      });
    }
 }

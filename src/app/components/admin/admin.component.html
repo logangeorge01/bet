@@ -19,18 +19,22 @@
       </div>
 
       <div style="font-size:20px;font-weight:600;margin-top:25px;">Upcoming event resolves</div>
-      
       <div style="margin-top:5px">
-         <div *ngFor="let event of (qs.events$ | async)" style="padding-top:5px;margin-bottom:10px;border-top:1px solid #000;">
-            <div>{{event.name}}</div>
-            <div style="margin-top:3px">
-               Est Resolve Datetime: {{event.estResolve.toDate().toLocaleDateString()}} {{event.estResolve.toDate().toLocaleTimeString()}}
+         <ng-container *ngIf="(qs.events$ | async)?.length; else noevents">
+            <div *ngFor="let event of (qs.events$ | async)" style="padding-top:5px;margin-bottom:10px;border-top:1px solid #000;">
+               <div>{{event.name}}</div>
+               <div style="margin-top:3px">
+                  Est Resolve Datetime: {{event.estResolve.toDate().toLocaleDateString()}} {{event.estResolve.toDate().toLocaleTimeString()}}
+               </div>
+               <div style="margin-top:6px;display:flex;justify-content:space-between;">
+                  <button (click)="resolve(event.eventID, event.sides[0].name)">{{event.sides[0].name}}</button>
+                  <button (click)="resolve(event.eventID, event.sides[1].name)">{{event.sides[1].name}}</button>
+               </div>
             </div>
-            <div style="margin-top:6px;display:flex;justify-content:space-between;">
-               <button (click)="resolve(event.eventID, 0)">{{event.sides[0].name}}</button>
-               <button (click)="resolve(event.eventID, 1)">{{event.sides[1].name}}</button>
-            </div>
-         </div>
+         </ng-container>
+         <ng-template #noevents>
+            <div>No events</div>
+         </ng-template>
       </div>
    </ng-container>
 </div>
@@ -61,17 +65,17 @@
          {{this.cat3}}
       </div>
       <div style="margin-top:10px">Event name</div>
-      <input type="text" placeholder="Arsenal vs Chelsea" [(ngModel)]="eventname">
+      <input style="margin-top:3px" type="text" placeholder="Arsenal vs Chelsea" [(ngModel)]="eventname">
       <div style="margin-top:10px">Side 1 name &amp; decimal odds (remove vig)</div>
-      <input type="text" placeholder="Arsenal" [(ngModel)]="side1name">
+      <input style="margin-top:3px" type="text" placeholder="Arsenal" [(ngModel)]="side1name">
       <input style="margin-top:1px" type="number" placeholder="1.54" [(ngModel)]="side1odds">
       <div style="margin-top:10px">Side 2 name &amp; decimal odds (remove vig)</div>
-      <input type="text" placeholder="Chelsea" [(ngModel)]="side2name">
+      <input style="margin-top:3px" type="text" placeholder="Chelsea" [(ngModel)]="side2name">
       <input style="margin-top:1px" type="number" placeholder="2.86" [(ngModel)]="side2odds">
       <div style="margin-top:10px">Estimated resolve datetime</div>
-      <input type="datetime-local" [(ngModel)]="estres">
+      <input style="margin-top:3px" type="datetime-local" [(ngModel)]="estres">
 
-      <button style="margin-top:10px;font-weight:600;" (click)="createMarket()">Create</button>
+      <button *ngIf="this.cat3 && this.estres" style="margin-top:10px;font-weight:600;" (click)="createMarket()">Create</button>
       <button style="margin-top:5px" (click)="notcreating=true">Cancel</button>
    </div>
 </ng-template>

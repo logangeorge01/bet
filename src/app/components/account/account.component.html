@@ -22,7 +22,7 @@
    <div style="margin-top:5px;width:250px;">
       <div *ngFor="let betObj of qs.userBets" style="padding:5px;border:1px solid #000;border-radius:5px;width:100%;margin-bottom:5px;width:100%;">
          <div>{{betObj.bet.event + ' (' + betObj.bet[betObj.cora].side + ' ' + (100/(betObj.bet.pot/betObj.bet[betObj.cora].amount) | number:'1.0-0') + '%)'}}</div>
-         <div style="font-weight:600">Bet ${{(betObj.bet.pot-betObj.bet[betObj.cora].amount).toFixed(2)}} to win ${{betObj.bet.pot.toFixed(2)}}</div>
+         <div style="font-weight:600">Bet ${{(betObj.bet[betObj.cora].amount).toFixed(2)}} to win ${{betObj.bet.pot.toFixed(2)}}</div>
       </div>
    </div>
 </ng-template>

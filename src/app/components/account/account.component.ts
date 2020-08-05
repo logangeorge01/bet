@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { QueriesService } from 'src/app/services/queries.service';
 import { Withdraw } from 'src/app/types';
-import { firestore } from 'firebase';
+import { firestore } from 'firebase/app';
 
 @Component({
   selector: 'app-account',
