@@ -81,7 +81,7 @@
          </div>
       </div>
       <div *ngIf="this.cat3" style="margin-top:3px">
-         <div style="margin-top:10px;margin-bottom:5px;">Which event?</div>
+         <div style="margin-top:10px;margin-bottom:3px;">Which event?</div>
          <div *ngIf="(qs.filterEvents$ | async)?.length===0">No current events to bet on</div>
          <div *ngFor="let fe of (qs.filterEvents$ | async)" (click)="this.selevent=fe" style="cursor:pointer;padding:3px 5px;margin-bottom:2px;background-color:#000;color:#fff;border-radius:2px;">
             {{fe.name}}
