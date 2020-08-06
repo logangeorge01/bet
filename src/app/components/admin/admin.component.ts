@@ -54,9 +54,22 @@ export class AdminComponent implements OnInit {
          cat3: this.cat3
       } as Event;
       this.qs.createEvent(newEvent).then(() => {
-         this.notcreating = true;
          this.loadEvs();
+         this.clearCreate();
       });
+   }
+
+   clearCreate() {
+      this.notcreating = true;
+      this.eventname = null;
+      this.side1name = null;
+      this.side1odds = null;
+      this.side2name = null;
+      this.side2odds = null;
+      this.estres = null;
+      this.cat1 = null;
+      this.cat2 = null;
+      this.cat3 = null;
    }
 
    gohome() {
