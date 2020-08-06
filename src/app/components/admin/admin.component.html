@@ -1,6 +1,6 @@
 <div *ngIf="(auth.user$ | async) as user" style="max-width:375px;display:flex;flex-direction:column;align-items:center;margin:0 auto;">
    <ng-container *ngIf="notcreating; else creating">
-      <div style="font-size:25px;font-weight:600;">Admin</div>
+      <div style="font-size:25px;font-weight:600;">Admin v1</div>
       <ng-container *ngIf="(qs.siteData$ | async) as sd">
          <div style="margin-top:15px">Site total: ${{sd.siteTotal.toFixed(2)}} | Our money: ${{sd.ourMoney.toFixed(2)}}</div>
       </ng-container>

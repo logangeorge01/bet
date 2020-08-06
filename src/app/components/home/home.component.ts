@@ -25,9 +25,9 @@ export class HomeComponent implements OnInit {
    filter3: string;
 
    constructor(
-      private auth: AuthService,
+      public auth: AuthService,
       private router: Router,
-      private qs: QueriesService
+      public qs: QueriesService
    ) { }
 
    ngOnInit() {

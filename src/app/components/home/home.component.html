@@ -24,10 +24,13 @@
             {{c2.key}}
          </div>
       </div>
-      <div *ngIf="this.filter2" style="display:flex;flex-direction:row;margin-top:3px;flex-wrap:wrap;">
+      <div *ngIf="this.filter2 && !this.filter3" style="display:flex;flex-direction:row;margin-top:3px;flex-wrap:wrap;">
          <div *ngFor="let c3 of (qs.cats[filter1][filter2] | keyvalue)" (click)="handleFilter(3, c3.key)" style="background-color:#000;color:#fff;padding:3px 5px;border-radius:3px;margin:1px;cursor:pointer;">
             {{c3.key}}
          </div>
+      </div>
+      <div *ngIf="this.filter3" style="background-color:#000;color:#fff;padding:3px 5px;border-radius:3px;margin:4px 0 1px;cursor:default;">
+         {{this.filter3}}
       </div>
 
       <div *ngIf="(qs.allBets$ | async)?.length; else nobets" style="margin-top:25px">
@@ -46,7 +49,7 @@
                </div>
             </ng-container>
             <ng-template #mybet>
-               <div style="padding:5px;border:1px solid #000;border-radius:5px;width:100%;">Your bet</div>
+               <div style="padding:5px;border:1px solid #000;border-radius:5px;">Your bet</div>
             </ng-template>
          </div>
       </div>

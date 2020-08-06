@@ -10,7 +10,8 @@ export class QueriesService {
    allBets$: Observable<Bet[]>;
    userBets: {
       bet: Bet,
-      cora: string
+      cora: string,
+      open: boolean
    }[];
    events$: Observable<Event[]>;
    filterEvents$: Observable<Event[]>;
@@ -24,18 +25,12 @@ export class QueriesService {
       this.getCats();
    }
 
-   getAllBets(status = 0) {
-      const cref = this.db.collection('allbets', ref => ref.where('status', '==', status).orderBy('dtCreated', 'desc').limit(50));
+   getAllBets() {
+      const cref = this.db.collection('allbets', ref => ref.where('open', '==', true).orderBy('dtCreated', 'desc').limit(50));
       this.allBets$ = cref.snapshotChanges().pipe(
          map(betsSS => betsSS.map(betSS => ({...(betSS.payload.doc.data() as DocumentData), betID: betSS.payload.doc.id} as Bet)))
       );
    }
-   /*getBetsFromCat(lvl: string, cat: string, status = 0) {
-      const cref = this.db.collection('allbets', ref => ref.where(lvl, '==', cat).where('status', '==', status).orderBy('dtCreated'));
-      this.allBets$ = cref.snapshotChanges().pipe(
-         map(betsSS => betsSS.map(betSS => betSS.payload.doc.data() as Bet))
-      );
-   }*/
    getBetsFromCat(lvl: string, cat: string) {
       this.allBets$ = this.allBets$.pipe(
          map(bets => bets.filter(bet => bet[lvl] === cat))
@@ -49,7 +44,8 @@ export class QueriesService {
             this.db.collection('allbets').doc(ubet.betID).get().toPromise().then(betSS =>
                this.userBets.push({
                   bet: betSS.data() as Bet,
-                  cora: ubet.cora
+                  cora: ubet.cora,
+                  open: ubet.open
                })
             );
          })
@@ -75,7 +71,7 @@ export class QueriesService {
             cora: 'acceptor'
          } as UserBet),
          uref.update({balance: firestore.FieldValue.increment(-bet.acceptor.amount)}),
-         this.db.collection('allbets').doc(bet.betID).update({uid: bet.acceptor.uid, status: 1})
+         this.db.collection('allbets').doc(bet.betID).update({'acceptor.uid': bet.acceptor.uid, open: false})
       ]);
    }
 
@@ -99,16 +95,16 @@ export class QueriesService {
          betsSS.docs.forEach(betSS => {
             const b = (betSS.data() as Bet);
             if (b.open) {
+               const uref = this.db.collection('users').doc(b.creator.uid).ref;
+               batch.update(uref, {balance: firestore.FieldValue.increment(b.creator.amount)});
+               batch.update(betSS.ref, {open: false}); // maybe delete open bets
+            } else {
                const dataref = this.db.collection('data').doc('data').ref;
                const winner = sidename === b.creator.side ? 'creator' : 'acceptor';
                const uref = this.db.collection('users').doc(b[winner].uid).ref;
                const fee = Math.round((((b.pot - b[winner].amount) * .1) + Number.EPSILON) * 100) / 100;
                batch.update(uref, {balance: firestore.FieldValue.increment(b.pot - fee)});
                batch.update(dataref, {ourMoney: firestore.FieldValue.increment(fee), siteTotal: firestore.FieldValue.increment(-fee)});
-            } else {
-               const uref = this.db.collection('users').doc(b.creator.uid).ref;
-               batch.update(uref, {balance: firestore.FieldValue.increment(b.creator.amount)});
-               batch.update(betSS.ref, {open: false});
             }
          });
          return Promise.resolve([

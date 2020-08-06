@@ -26,8 +26,8 @@ export class AdminComponent implements OnInit {
    cat3: string;
 
    constructor(
-      private auth: AuthService,
-      private qs: QueriesService,
+      public auth: AuthService,
+      public qs: QueriesService,
       private router: Router
    ) { }
 
@@ -89,7 +89,7 @@ export class AdminComponent implements OnInit {
       this.qs.resolveEvent(eventID, sidename).then(() => {
          alert('Event resolved successfully');
          this.loadEvs();
-         this.qs.getSiteData();
+         setTimeout(() => this.qs.getSiteData(), 1000);
       });
    }
 }

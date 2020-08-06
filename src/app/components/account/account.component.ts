@@ -19,9 +19,9 @@ export class AccountComponent implements OnInit {
    wdAmount: number;
 
    constructor(
-      private auth: AuthService,
+      public auth: AuthService,
       private router: Router,
-      private qs: QueriesService
+      public qs: QueriesService
    ) { }
 
    ngOnInit() {
