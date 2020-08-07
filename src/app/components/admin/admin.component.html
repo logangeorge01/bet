@@ -76,7 +76,7 @@
       <input style="margin-top:3px" type="datetime-local" [(ngModel)]="estres">
 
       <button *ngIf="this.cat3 && this.estres" style="margin-top:10px;font-weight:600;" (click)="createMarket()">Create</button>
-      <button style="margin-top:5px" (click)="cancelCreate()">Cancel</button>
+      <button style="margin-top:5px" (click)="this.notcreating=true">Cancel</button>
    </div>
 </ng-template>
 

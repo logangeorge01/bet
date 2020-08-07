@@ -55,11 +55,12 @@ export class AdminComponent implements OnInit {
       } as Event;
       this.qs.createEvent(newEvent).then(() => {
          this.loadEvs();
-         this.clearCreate();
+         // this.clearCreate();
       });
    }
 
-   clearCreate() {
+   /*clearCreate() {
+      // might actually be easier not to clear
       this.notcreating = true;
       this.eventname = null;
       this.side1name = null;
@@ -70,7 +71,7 @@ export class AdminComponent implements OnInit {
       this.cat1 = null;
       this.cat2 = null;
       this.cat3 = null;
-   }
+   }*/
 
    gohome() {
       this.router.navigate(['']);
@@ -101,8 +102,10 @@ export class AdminComponent implements OnInit {
    resolve(eventID: string, sidename: string) {
       this.qs.resolveEvent(eventID, sidename).then(() => {
          alert('Event resolved successfully');
-         this.loadEvs();
-         setTimeout(() => this.qs.getSiteData(), 1000);
+         setTimeout(() => {
+            this.qs.getSiteData();
+            this.loadEvs();
+         }, 1000);
       });
    }
 }
